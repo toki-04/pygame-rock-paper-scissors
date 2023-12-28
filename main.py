@@ -13,6 +13,8 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("ROCK PAPER SCISSORS")
 clock = pygame.time.Clock()
 
+
+
 def setBg():
     bg = pygame.image.load("./img/BG.png")
     screen.blit(bg, (0,0))
@@ -24,32 +26,64 @@ def setTitle():
 
 
 
+class Score:
+    def __init__(self):
+        self.win = 0
+        self.draw = 0
+        self.lose = 0
 
-def check_winner():
+score = Score()
+
+def check_winner():# Score
+
     if player_choice.value == "rock" and bot_choice.value == "rock":
-        print("draw")
+        score.draw += 1
     elif player_choice.value == "rock" and bot_choice.value == "paper":
-        print("lose")
+        score.lose += 1
     elif player_choice.value == "rock" and bot_choice.value == "scissors":
-        print("win")
-
+        score.win += 1
     if player_choice.value == "paper" and bot_choice.value == "rock":
-        print("win")
+        score.win += 1
     elif player_choice.value == "paper" and bot_choice.value == "paper":
-        print("draw")
+        score.draw += 1
     elif player_choice.value == "paper" and bot_choice.value == "scissors":
-        print("lose")
-
+        score.lose += 1
     if player_choice.value == "scissors" and bot_choice.value == "rock":
-        print("lose")
+        score.lose += 1
     elif player_choice.value == "scissors" and bot_choice.value == "paper":
-        print("win")
+        score.win += 1
     elif player_choice.value == "scissors" and bot_choice.value == "scissors":
-        print("draw")
+        score.draw += 1
 
     bot_choice.image = pygame.image.load(f"./img/{bot_choice.value}.png").convert_alpha()
     bot_choice.image = pygame.transform.rotate(bot_choice.image, 180)
     bot_choice.value = random.choice(["rock", "paper", "scissors"])
+
+def score_sheet():
+
+    score_container = pygame.Rect(67, 191, 150, 160)
+    pygame.draw.rect(screen, "#1A535C", score_container, border_radius=8)
+
+    pos_x, pos_y = score_container.center
+
+
+    WHITE = (255, 255, 255)
+    font = pygame.font.Font(None, 30)
+    text_win = font.render(f"WIN: {str(score.win)}", True, WHITE)
+    text_win_rect = text_win.get_rect(center=(pos_x, pos_y-40))
+
+    text_draw = font.render(f"DRAW: {str(score.draw)}", True, WHITE)
+    text_draw_rect = text_draw.get_rect(center=(pos_x, pos_y))
+
+    text_lose = font.render(f"LOSE: {str(score.lose)}", True, WHITE)
+    text_lose_rect = text_lose.get_rect(center=(pos_x, pos_y+40))
+
+    screen.blit(text_win, text_win_rect)
+    screen.blit(text_draw, text_draw_rect)
+    screen.blit(text_lose, text_lose_rect)
+
+
+
 
 
 
@@ -149,7 +183,6 @@ class Choice(pygame.sprite.Sprite):
 
 
 
-
 # BUTTONS
 rock_button = Button("./img/btn-rock.png", int((WIDTH/2)-175), HEIGHT-75, "rock")
 paper_button = Button("./img/btn-paper.png", 400, HEIGHT-85, "paper")
@@ -177,6 +210,7 @@ btn_fight_rect = btn_figth.get_rect(center=(int(WIDTH/2), 400))
 while True:
     setBg()
     setTitle()
+    score_sheet()
 
     button_group.draw(screen)
     bot_choice_group.draw(screen)
